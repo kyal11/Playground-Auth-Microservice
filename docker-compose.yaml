@@ -1,0 +1,15 @@
+services:
+    postgres:
+        image: postgres:latest
+        environment:
+            POSTGRES_USER: ${SPRING_AUTH_USER}
+            POSTGRES_PASSWORD: ${SPRING_AUTH_PASSWORD}
+            POSTGRES_DB: ${SPRING_AUTH_DB}
+        ports:
+            - "${DB_PORT}:5432"
+        container_name: db-spring-auth
+        volumes:
+            - db-spring-auth-data:/var/lib/postgresql/data
+
+volumes:
+    db-spring-auth-data:
