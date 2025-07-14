@@ -18,6 +18,8 @@ public class Users {
 
     private String name;
 
+    private String password;
+
     @Column(nullable= false, unique = true)
     private String email;
 
