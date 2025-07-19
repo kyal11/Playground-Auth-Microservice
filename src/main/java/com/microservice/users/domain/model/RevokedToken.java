@@ -7,8 +7,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "revoked_tokens")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class RevokedToken {
     @Id

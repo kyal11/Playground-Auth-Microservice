@@ -6,8 +6,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "oauth_tokens")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class OAuthToken {
     @Id
