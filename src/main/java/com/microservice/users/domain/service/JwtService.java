@@ -1,5 +1,6 @@
 package com.microservice.users.domain.service;
 
+import com.microservice.users.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -18,17 +19,14 @@ import java.util.Map;
 
 @Service
 public class JwtService {
-    @Value("${jwt.secret}")
-    private String secret;
-
-    @Value("${jwt.expiration}")
-    private Integer expiration;
-
+    private final JwtConfig jwtConfig;
     private SecretKey secretKey;
-
+    public JwtService(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
     @PostConstruct
     public void init() {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+        this.secretKey = Keys.hmacShaKeyFor(jwtConfig.getJwtSecret().getBytes());
     }
 
     public String generateToken(String userId, String email) {
@@ -39,7 +37,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userId)
                 .setIssuedAt(new Date())
-                .setExpiration(Date.from(Instant.now().plusMillis(expiration)))
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtConfig.getJwtExpiration())))
                 .signWith(secretKey, SignatureAlgorithm.ES256)
                 .compact();
     }
