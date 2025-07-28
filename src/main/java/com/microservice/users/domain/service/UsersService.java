@@ -1,7 +1,12 @@
 package com.microservice.users.domain.service;
 
+import com.microservice.users.domain.exception.BadRequestException;
+import com.microservice.users.domain.exception.NotFoundException;
 import com.microservice.users.domain.model.Users;
 import com.microservice.users.domain.repository.UsersRepository;
+import com.microservice.users.dto.users.request.CreateUserRequest;
+import com.microservice.users.dto.users.request.UpdateUserPassword;
+import com.microservice.users.dto.users.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,24 +45,30 @@ public class UsersService {
     }
 
     @Transactional
-    public Users create(Users user) {
+    public Users create(CreateUserRequest dto) {
+        Users user = new Users();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
+        user.setProvider(dto.getProvider());
+        user.setProviderId(dto.getProviderId());
+        user.setAvatarUrl(dto.getAvatarUrl());
         user.setCreatedAt(Instant.now());
         user.setUpdatedAt(Instant.now());
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return usersRepository.save(user);
     }
 
     @Transactional
-    public Users update(Long id, Users updatedUser) {
+    public Users update(Long id, UpdateUserRequest dto) {
         return usersRepository.findById(id)
                 .map(user -> {
-                    user.setName(updatedUser.getName());
-                    user.setEmail(updatedUser.getEmail());
-                    user.setAvatarUrl(updatedUser.getAvatarUrl());
+                    user.setName(dto.getName());
+                    user.setEmail(dto.getEmail());
+                    user.setAvatarUrl(dto.getAvatarUrl());
                     user.setUpdatedAt(Instant.now());
                     return usersRepository.save(user);
                 })
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
     }
 
     @Transactional
@@ -66,11 +77,11 @@ public class UsersService {
     }
 
     @Transactional
-    public void updatePassword(Long id, String password, String confirmPassword) {
-        if(!password.equals(confirmPassword)) {
-            throw new IllegalArgumentException("Password not match!");
+    public void updatePassword(Long id, UpdateUserPassword dto) {
+        if(!dto.getPassword().equals(dto.getConfirmPassword())) {
+            throw new BadRequestException("Password does not match confirmation");
         }
-        String hashedPassword = bCryptPasswordEncoder.encode(password);
-        usersRepository.updatePassword(id, password);
+        String hashedPassword = bCryptPasswordEncoder.encode(dto.getPassword());
+        usersRepository.updatePassword(id, dto.getPassword());
     }
 }
