@@ -29,13 +29,13 @@ public class JwtService {
         this.secretKey = Keys.hmacShaKeyFor(jwtConfig.getJwtSecret().getBytes());
     }
 
-    public String generateToken(String userId, String email) {
+    public String generateToken(Long userId, String email) {
         Map<String, String> claims = new HashMap<>();
-        claims.put("userId", userId);
+        claims.put("userId", userId.toString());
         claims.put("email", email);
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userId)
+                .setSubject(userId.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(Instant.now().plusMillis(jwtConfig.getJwtExpiration())))
                 .signWith(secretKey, SignatureAlgorithm.ES256)
@@ -66,7 +66,10 @@ public class JwtService {
         return extractClaims(token).get("email", String.class);
     }
 
-    public String extractUserId(String token) {
-        return extractClaims(token).get("userId", String.class);
+    public Instant extractExpired() {
+        return  Instant.now().plusMillis(jwtConfig.getJwtExpiration());
+    }
+    public Long extractUserId(String token) {
+        return extractClaims(token).get("userId", Long.class);
     }
 }

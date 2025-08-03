@@ -22,4 +22,6 @@ public interface DeviceSessionRepository extends JpaRepository<DeviceSession, Lo
     List<DeviceSession> findAllByUser(Users user);
 
     DeviceSession save(DeviceSession device);
+
+    void deleteAllByUserId(Long userId);
 }
