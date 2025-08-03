@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class UpdateUserPassword {
+public class UpdateUserPasswordReq {
     @NotBlank
     @Min(8)
     private String password;

@@ -13,6 +13,8 @@ public interface DeviceSessionRepository extends JpaRepository<DeviceSession, Lo
 
     Optional<DeviceSession> findByDeviceId(String deviceId);
 
+    Optional<DeviceSession> findByUserId(Long userId);
+
     List<DeviceSession> findAll();
 
     List<DeviceSession> findAllByDeviceId(String deviceId);

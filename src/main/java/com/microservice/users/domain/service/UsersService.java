@@ -4,9 +4,9 @@ import com.microservice.users.domain.exception.BadRequestException;
 import com.microservice.users.domain.exception.NotFoundException;
 import com.microservice.users.domain.model.Users;
 import com.microservice.users.domain.repository.UsersRepository;
-import com.microservice.users.dto.users.request.CreateUserRequest;
-import com.microservice.users.dto.users.request.UpdateUserPassword;
-import com.microservice.users.dto.users.request.UpdateUserRequest;
+import com.microservice.users.dto.users.request.CreateUserReq;
+import com.microservice.users.dto.users.request.UpdateUserPasswordReq;
+import com.microservice.users.dto.users.request.UpdateUserReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +45,7 @@ public class UsersService {
     }
 
     @Transactional
-    public Users create(CreateUserRequest dto) {
+    public Users create(CreateUserReq dto) {
         Users user = new Users();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
@@ -59,7 +59,7 @@ public class UsersService {
     }
 
     @Transactional
-    public Users update(Long id, UpdateUserRequest dto) {
+    public Users update(Long id, UpdateUserReq dto) {
         return usersRepository.findById(id)
                 .map(user -> {
                     user.setName(dto.getName());
@@ -77,7 +77,7 @@ public class UsersService {
     }
 
     @Transactional
-    public void updatePassword(Long id, UpdateUserPassword dto) {
+    public void updatePassword(Long id, UpdateUserPasswordReq dto) {
         if(!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Password does not match confirmation");
         }

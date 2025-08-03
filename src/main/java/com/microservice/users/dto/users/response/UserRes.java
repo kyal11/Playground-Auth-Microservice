@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.Instant;
 
 @Data
-public class UserResponse {
+public class UserRes {
     private Long id;
     private String name;
     private String email;

@@ -16,4 +16,6 @@ public interface RevokedTokenRepository extends JpaRepository<RevokedToken, Long
     void deleteByToken(String token);
 
     RevokedToken Save(RevokedToken token);
+
+    boolean existByToken(String token);
 }

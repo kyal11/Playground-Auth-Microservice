@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class UpdateUserRequest {
+public class UpdateUserReq {
     @NotBlank
     private String name;
 
