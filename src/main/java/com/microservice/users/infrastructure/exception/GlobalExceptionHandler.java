@@ -1,4 +1,4 @@
-package com.microservice.users.infrastucture.exception;
+package com.microservice.users.infrastructure.exception;
 
 import com.microservice.users.domain.exception.BadRequestException;
 import com.microservice.users.domain.exception.NotFoundException;

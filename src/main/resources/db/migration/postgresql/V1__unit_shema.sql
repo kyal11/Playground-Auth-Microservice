@@ -5,35 +5,38 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255),
     provider VARCHAR(50),
-    providerId VARCHAR(150),
-    avatarUrl TEXT,
-    createdAt TIMESTAMP DEFAULT NOW(),
-    updatedAt TIMESTAMP DEFAULT NOW(),
-    deletedAt TIMESTAMP DEFAULT NOW()
+    provider_id VARCHAR(150),
+    avatar_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    deleted_at TIMESTAMP WITH TIME ZONE
 );
 
 -- OAuth Token Table
 CREATE TABLE oauth_tokens (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    accessToken TEXT NOT NULL,
-    refreshToken TEXT,
-    expiresAt TIMESTAMP
+    access_token TEXT NOT NULL,
+    refresh_token TEXT,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 -- Device Session Table
 CREATE TABLE device_sessions (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    deviceId VARCHAR(255) NOT NULL,
-    jwtToken TEXT NOT NULL,
-    createdAt TIMESTAMP DEFAULT NOW(),
-    expiredAt TIMESTAMP
+    device_id VARCHAR(255) NOT NULL,
+    jwt_token TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    expired_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Revoked Token Table (Blacklist)
 CREATE TABLE revoked_tokens (
     id SERIAL PRIMARY KEY,
     token TEXT NOT NULL,
-    revokedAt TIMESTAMP DEFAULT NOW()
+    revoked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Tambahkan index untuk pencarian token yang cepat
+CREATE INDEX idx_revoked_tokens_token ON revoked_tokens(token);

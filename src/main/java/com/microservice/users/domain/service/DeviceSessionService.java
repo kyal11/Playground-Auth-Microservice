@@ -48,7 +48,7 @@ public class DeviceSessionService {
     }
 
     public boolean isTokenRevoked(String token) {
-        return revokedTokenRepository.existByToken(token);
+        return revokedTokenRepository.existsByToken(token);
     }
     @Transactional
     public void deleteAllByUserId(long userId) {
