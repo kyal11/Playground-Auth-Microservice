@@ -1,0 +1,36 @@
+package com.microservice.users.controller;
+
+import com.microservice.users.domain.service.AuthService;
+import com.microservice.users.dto.auth.request.LoginReq;
+import com.microservice.users.dto.auth.request.RegisterReq;
+import com.microservice.users.dto.auth.response.LoginRes;
+import com.microservice.users.dto.auth.response.RegisterRes;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
+public class AuthController {
+    private final AuthService authService;
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisterRes> register(@RequestBody RegisterReq request) {
+        return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginRes> login(@RequestBody LoginReq request, @RequestBody String deviceInfo) {
+        return ResponseEntity.ok(authService.login(request, deviceInfo));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody String token) {
+        return ResponseEntity.ok(authService.logout(token));
+    }
+
+}

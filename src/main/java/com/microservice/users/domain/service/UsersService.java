@@ -46,24 +46,32 @@ public class UsersService {
         return usersRepository.findAllUsers().stream().map(this::toUserRes).collect(Collectors.toList());
     }
 
-    public Optional<UserRes> getById(Long id) {
-        return usersRepository.findById(id).filter(u -> u.getDeletedAt() == null).map(this::toUserRes);
+    public UserRes getById(Long id) {
+        Users user = usersRepository.findById(id)
+                .filter(u -> u.getDeletedAt() == null)
+                .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
+        return toUserRes(user);
     }
 
-    public Optional<UserRes> getByEmail(String email) {
-        return usersRepository.findByEmail(email)
+    public UserRes getByEmail(String email) {
+        Users user = usersRepository.findByEmail(email)
                 .filter(u -> u.getDeletedAt() == null)
-                .map(this::toUserRes);
+                .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+        return toUserRes(user);
     }
 
-    public Optional<UserRes> getByProviderId(String providerId) {
-        return usersRepository.findByProviderId(providerId)
+    public UserRes getByProviderId(String providerId) {
+        Users user = usersRepository.findByProviderId(providerId)
                 .filter(u -> u.getDeletedAt() == null)
-                .map(this::toUserRes);
+                .orElseThrow(() -> new NotFoundException("User with provider ID " + providerId + " not found"));
+        return toUserRes(user);
     }
 
     @Transactional
     public UserRes create(CreateUserReq dto) {
+        if (usersRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new BadRequestException("Email already exists");
+        }
         Users user = new Users();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
@@ -93,12 +101,17 @@ public class UsersService {
     }
 
     @Transactional
-    public void softDelete(Long id) {
+    public String softDelete(Long id) {
+        Users user = usersRepository.findById(id)
+                .filter(u -> u.getDeletedAt() == null)
+                .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
         usersRepository.softDeleteById(id);
+
+        return "Delete user successfully!";
     }
 
     @Transactional
-    public void updatePassword(Long id, UpdateUserPasswordReq dto) {
+    public String updatedPassword(Long id, UpdateUserPasswordReq dto) {
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Password does not match confirmation");
         }
@@ -108,5 +121,7 @@ public class UsersService {
 
         String hashedPassword = bCryptPasswordEncoder.encode(dto.getPassword());
         usersRepository.updatePassword(id, hashedPassword);
+
+        return "Update password successfully!";
     }
 }
