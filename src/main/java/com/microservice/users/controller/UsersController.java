@@ -1,6 +1,7 @@
 package com.microservice.users.controller;
 
 import com.microservice.users.domain.service.UsersService;
+import com.microservice.users.dto.ApiResponse;
 import com.microservice.users.dto.users.request.CreateUserReq;
 import com.microservice.users.dto.users.request.UpdateUserPasswordReq;
 import com.microservice.users.dto.users.request.UpdateUserReq;
@@ -21,49 +22,57 @@ public class UsersController {
     private final UsersService usersService;
 
     @GetMapping
-    public ResponseEntity<Page<UserRes>> getAllUsers(Pageable pageable) {
-        return ResponseEntity.ok(usersService.getAll(pageable));
+    public ResponseEntity<ApiResponse<Page<UserRes>>> getAllUsers(Pageable pageable) {
+        ApiResponse<Page<UserRes>> response = usersService.getAll(pageable);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserRes>> getAllWithoutPagination() {
-        return ResponseEntity.ok(usersService.getAllWithoutPagination());
+    public ResponseEntity<ApiResponse<List<UserRes>>> getAllWithoutPagination() {
+        ApiResponse<List<UserRes>> response = usersService.getAllWithoutPagination();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserRes> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(usersService.getById(id));
+    public ResponseEntity<ApiResponse<UserRes>> getUserById(@PathVariable Long id) {
+        ApiResponse<UserRes> response = usersService.getById(id);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/email")
-    public ResponseEntity<UserRes> getUserByEmail(@RequestParam String email) {
-        return ResponseEntity.ok(usersService.getByEmail(email));
+    public ResponseEntity<ApiResponse<UserRes>> getUserByEmail(@RequestParam String email) {
+        ApiResponse<UserRes> response = usersService.getByEmail(email);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/provider")
-    public ResponseEntity<UserRes> getUserByProviderId(@RequestParam String providerId) {
-        return ResponseEntity.ok(usersService.getByProviderId(providerId));
+    public ResponseEntity<ApiResponse<UserRes>> getUserByProviderId(@RequestParam String providerId) {
+        ApiResponse<UserRes> response = usersService.getByProviderId(providerId);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<UserRes> createUser(@RequestParam CreateUserReq request) {
-        UserRes newUser = usersService.create(request);
-        return ResponseEntity.created(URI.create("/api/users/" + newUser.getId())).body(newUser);
+    public ResponseEntity<ApiResponse<UserRes>> createUser(@RequestBody CreateUserReq request) {
+        ApiResponse<UserRes> response = usersService.create(request);
+        return ResponseEntity.created(URI.create("/api/v1/users/" + response.getData().getId()))
+                .body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserRes> update(@PathVariable Long id, @RequestBody UpdateUserReq request) {
-        UserRes updatedUser = usersService.update(id, request);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<ApiResponse<UserRes>> update(@PathVariable Long id, @RequestBody UpdateUserReq request) {
+        ApiResponse<UserRes> response = usersService.update(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> softDelete(@PathVariable Long id) {
-        return ResponseEntity.ok(usersService.softDelete(id));
+    public ResponseEntity<ApiResponse<String>> softDelete(@PathVariable Long id) {
+        ApiResponse<String> response = usersService.softDelete(id);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody UpdateUserPasswordReq request) {
-        return ResponseEntity.ok(usersService.updatedPassword(id, request));
+    public ResponseEntity<ApiResponse<String>> updatePassword(@PathVariable Long id, @RequestBody UpdateUserPasswordReq request) {
+        ApiResponse<String> response = usersService.updatedPassword(id, request);
+        return ResponseEntity.ok(response);
     }
 }

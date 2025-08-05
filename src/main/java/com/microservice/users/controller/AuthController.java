@@ -1,6 +1,7 @@
 package com.microservice.users.controller;
 
 import com.microservice.users.domain.service.AuthService;
+import com.microservice.users.dto.ApiResponse;
 import com.microservice.users.dto.auth.request.LoginReq;
 import com.microservice.users.dto.auth.request.RegisterReq;
 import com.microservice.users.dto.auth.response.LoginRes;
@@ -19,17 +20,17 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterRes> register(@RequestBody RegisterReq request) {
+    public ResponseEntity<ApiResponse<RegisterRes>> register(@RequestBody RegisterReq request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginRes> login(@RequestBody LoginReq request, @RequestBody String deviceInfo) {
+    public ResponseEntity<ApiResponse<LoginRes>> login(@RequestBody LoginReq request, @RequestBody String deviceInfo) {
         return ResponseEntity.ok(authService.login(request, deviceInfo));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody String token) {
+    public ResponseEntity<ApiResponse<String>> logout(@RequestBody String token) {
         return ResponseEntity.ok(authService.logout(token));
     }
 

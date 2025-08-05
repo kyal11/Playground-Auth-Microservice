@@ -6,6 +6,7 @@ import com.microservice.users.domain.model.RevokedToken;
 import com.microservice.users.domain.model.Users;
 import com.microservice.users.domain.repository.RevokedTokenRepository;
 import com.microservice.users.domain.repository.UsersRepository;
+import com.microservice.users.dto.ApiResponse;
 import com.microservice.users.dto.auth.request.LoginReq;
 import com.microservice.users.dto.auth.request.RegisterReq;
 import com.microservice.users.dto.auth.response.LoginRes;
@@ -31,7 +32,7 @@ public class AuthService {
     private final JwtConfig jwtConfig;
 
     @Transactional
-    public RegisterRes register(RegisterReq dto) {
+    public ApiResponse<RegisterRes> register(RegisterReq dto) {
         if (usersRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
@@ -44,11 +45,13 @@ public class AuthService {
         user.setCreatedAt(Instant.now());
         user.setUpdatedAt(Instant.now());
         Users savedUsers = usersRepository.save(user);
-        return new RegisterRes(savedUsers.getId(), savedUsers.getName(), savedUsers.getEmail());
+
+        RegisterRes response = new RegisterRes(savedUsers.getId(), savedUsers.getName(), savedUsers.getEmail());
+        return ApiResponse.success("Successfully register account!", response);
     }
 
     @Transactional
-    public LoginRes login(LoginReq dto, String deviceInfo) {
+    public ApiResponse<LoginRes> login(LoginReq dto, String deviceInfo) {
         Users user = usersRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new BadRequestException("Email not found"));
 
@@ -65,11 +68,12 @@ public class AuthService {
 
         deviceSessionService.registerNewSession(newSessionReq, jwtService.extractExpired());
 
-        return new LoginRes(user.getName(), user.getEmail(), token);
+        LoginRes response = new LoginRes(user.getName(), user.getEmail(), token);
+        return ApiResponse.success("Successfully login!", response);
     }
 
     @Transactional
-    public String logout(String token) {
+    public ApiResponse<String> logout(String token) {
         RevokedToken revokedToken = new RevokedToken();
         revokedToken.setToken(token);
         revokedToken.setRevokedAt(Instant.now());
@@ -78,6 +82,6 @@ public class AuthService {
         Long userId = jwtService.extractUserId(token);
         deviceSessionService.deleteAllByUserId(userId);
 
-        return "Logout successful";
+        return ApiResponse.success("Logout successful");
     }
 }

@@ -4,6 +4,7 @@ import com.microservice.users.domain.exception.BadRequestException;
 import com.microservice.users.domain.exception.NotFoundException;
 import com.microservice.users.domain.model.Users;
 import com.microservice.users.domain.repository.UsersRepository;
+import com.microservice.users.dto.ApiResponse;
 import com.microservice.users.dto.users.request.CreateUserReq;
 import com.microservice.users.dto.users.request.UpdateUserPasswordReq;
 import com.microservice.users.dto.users.request.UpdateUserReq;
@@ -38,37 +39,39 @@ public class UsersService {
         return res;
     }
 
-    public Page<UserRes> getAll(Pageable pageable) {
-        return usersRepository.findAllByDeletedAtIsNull(pageable).map(this::toUserRes);
+    public ApiResponse<Page<UserRes>> getAll(Pageable pageable) {
+        Page<UserRes> users = usersRepository.findAllByDeletedAtIsNull(pageable).map(this::toUserRes);
+        return ApiResponse.success("Get all users successfully", users);
     }
 
-    public List<UserRes> getAllWithoutPagination() {
-        return usersRepository.findAllUsers().stream().map(this::toUserRes).collect(Collectors.toList());
+    public ApiResponse<List<UserRes>> getAllWithoutPagination() {
+        List<UserRes> users = usersRepository.findAllUsers().stream().map(this::toUserRes).collect(Collectors.toList());
+        return ApiResponse.success("Get all users successfully", users);
     }
 
-    public UserRes getById(Long id) {
+    public ApiResponse<UserRes> getById(Long id) {
         Users user = usersRepository.findById(id)
                 .filter(u -> u.getDeletedAt() == null)
                 .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
-        return toUserRes(user);
+        return ApiResponse.success("Get user by ID successfully", toUserRes(user));
     }
 
-    public UserRes getByEmail(String email) {
+    public ApiResponse<UserRes> getByEmail(String email) {
         Users user = usersRepository.findByEmail(email)
                 .filter(u -> u.getDeletedAt() == null)
                 .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
-        return toUserRes(user);
+        return ApiResponse.success("Get user by email successfully", toUserRes(user));
     }
 
-    public UserRes getByProviderId(String providerId) {
+    public ApiResponse<UserRes> getByProviderId(String providerId) {
         Users user = usersRepository.findByProviderId(providerId)
                 .filter(u -> u.getDeletedAt() == null)
                 .orElseThrow(() -> new NotFoundException("User with provider ID " + providerId + " not found"));
-        return toUserRes(user);
+        return ApiResponse.success("Get user by provider ID successfully", toUserRes(user));
     }
 
     @Transactional
-    public UserRes create(CreateUserReq dto) {
+    public ApiResponse<UserRes> create(CreateUserReq dto) {
         if (usersRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
@@ -83,11 +86,11 @@ public class UsersService {
         user.setUpdatedAt(Instant.now());
 
         Users savedUser = usersRepository.save(user);
-        return toUserRes(savedUser);
+        return ApiResponse.success("Create user successfully", toUserRes(savedUser));
     }
 
     @Transactional
-    public UserRes update(Long id, UpdateUserReq dto) {
+    public ApiResponse<UserRes> update(Long id, UpdateUserReq dto) {
         Users userToUpdate = usersRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
 
@@ -97,21 +100,21 @@ public class UsersService {
         userToUpdate.setUpdatedAt(Instant.now());
 
         Users updatedUser = usersRepository.save(userToUpdate);
-        return toUserRes(updatedUser);
+        return ApiResponse.success("Update user successfully", toUserRes(updatedUser));
     }
 
     @Transactional
-    public String softDelete(Long id) {
+    public ApiResponse<String> softDelete(Long id) {
         Users user = usersRepository.findById(id)
                 .filter(u -> u.getDeletedAt() == null)
                 .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
         usersRepository.softDeleteById(id);
 
-        return "Delete user successfully!";
+        return ApiResponse.success("Delete user successfully!");
     }
 
     @Transactional
-    public String updatedPassword(Long id, UpdateUserPasswordReq dto) {
+    public ApiResponse<String> updatedPassword(Long id, UpdateUserPasswordReq dto) {
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new BadRequestException("Password does not match confirmation");
         }
@@ -122,6 +125,6 @@ public class UsersService {
         String hashedPassword = bCryptPasswordEncoder.encode(dto.getPassword());
         usersRepository.updatePassword(id, hashedPassword);
 
-        return "Update password successfully!";
+        return ApiResponse.success("Update password successfully!");
     }
 }
