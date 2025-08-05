@@ -38,7 +38,7 @@ public class JwtService {
                 .setSubject(userId.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(Instant.now().plusMillis(jwtConfig.getJwtExpiration())))
-                .signWith(secretKey, SignatureAlgorithm.ES256)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -69,7 +69,7 @@ public class JwtService {
     public Instant extractExpired() {
         return  Instant.now().plusMillis(jwtConfig.getJwtExpiration());
     }
-    public Long extractUserId(String token) {
-        return extractClaims(token).get("userId", Long.class);
+    public String extractUserId(String token) {
+        return extractClaims(token).get("userId", String.class);
     }
 }

@@ -79,8 +79,8 @@ public class AuthService {
         revokedToken.setRevokedAt(Instant.now());
         revokedTokenRepository.save(revokedToken);
 
-        Long userId = jwtService.extractUserId(token);
-        deviceSessionService.deleteAllByUserId(userId);
+        String userId = jwtService.extractUserId(token);
+        deviceSessionService.deleteAllByUserId(Long.parseLong(userId));
 
         return ApiResponse.success("Logout successful");
     }

@@ -14,4 +14,6 @@ public class LoginReq {
     @NotBlank
     @Min(8)
     private String password;
+
+    private String deviceInfo;
 }

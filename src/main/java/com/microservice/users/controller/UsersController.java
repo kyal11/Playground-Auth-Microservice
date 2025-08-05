@@ -2,9 +2,7 @@ package com.microservice.users.controller;
 
 import com.microservice.users.domain.service.UsersService;
 import com.microservice.users.dto.ApiResponse;
-import com.microservice.users.dto.users.request.CreateUserReq;
-import com.microservice.users.dto.users.request.UpdateUserPasswordReq;
-import com.microservice.users.dto.users.request.UpdateUserReq;
+import com.microservice.users.dto.users.request.*;
 import com.microservice.users.dto.users.response.UserRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,15 +37,15 @@ public class UsersController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/email")
-    public ResponseEntity<ApiResponse<UserRes>> getUserByEmail(@RequestParam String email) {
-        ApiResponse<UserRes> response = usersService.getByEmail(email);
+    @PostMapping("/email")
+    public ResponseEntity<ApiResponse<UserRes>> getUserByEmail(@RequestBody UserEmailRequest request) {
+        ApiResponse<UserRes> response = usersService.getByEmail(request.getEmail());
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/provider")
-    public ResponseEntity<ApiResponse<UserRes>> getUserByProviderId(@RequestParam String providerId) {
-        ApiResponse<UserRes> response = usersService.getByProviderId(providerId);
+    @PostMapping("/provider")
+    public ResponseEntity<ApiResponse<UserRes>> getUserByProviderId(@RequestBody UserProviderIdRequest request) {
+        ApiResponse<UserRes> response = usersService.getByProviderId(request.getProviderId());
         return ResponseEntity.ok(response);
     }
 
