@@ -12,15 +12,6 @@ CREATE TABLE users (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- OAuth Token Table
-CREATE TABLE oauth_tokens (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    access_token TEXT NOT NULL,
-    refresh_token TEXT,
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL
-);
-
 -- Device Session Table
 CREATE TABLE device_sessions (
     id SERIAL PRIMARY KEY,

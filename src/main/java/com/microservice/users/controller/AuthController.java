@@ -3,6 +3,7 @@ package com.microservice.users.controller;
 import com.microservice.users.domain.service.AuthService;
 import com.microservice.users.dto.ApiResponse;
 import com.microservice.users.dto.auth.request.LoginReq;
+import com.microservice.users.dto.auth.request.LoginWithOauthReq;
 import com.microservice.users.dto.auth.request.LogoutReq;
 import com.microservice.users.dto.auth.request.RegisterReq;
 import com.microservice.users.dto.auth.response.LoginRes;
@@ -28,6 +29,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginRes>> login(@RequestBody LoginReq request) {
         return ResponseEntity.ok(authService.login(request, request.getDeviceInfo()));
+    }
+
+    @PostMapping("/login/oauth/google")
+    public ResponseEntity<ApiResponse<LoginRes>> loginWithGoogle(@RequestBody LoginWithOauthReq request) {
+        return ResponseEntity.ok(authService.registerOrLoginGoogle(request, request.getDeviceInfo()));
     }
 
     @PostMapping("/logout")

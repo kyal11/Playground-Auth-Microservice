@@ -8,6 +8,7 @@ import com.microservice.users.domain.repository.RevokedTokenRepository;
 import com.microservice.users.domain.repository.UsersRepository;
 import com.microservice.users.dto.ApiResponse;
 import com.microservice.users.dto.auth.request.LoginReq;
+import com.microservice.users.dto.auth.request.LoginWithOauthReq;
 import com.microservice.users.dto.auth.request.RegisterReq;
 import com.microservice.users.dto.auth.response.LoginRes;
 import com.microservice.users.dto.auth.response.RegisterRes;
@@ -70,6 +71,30 @@ public class AuthService {
 
         LoginRes response = new LoginRes(user.getName(), user.getEmail(), token);
         return ApiResponse.success("Successfully login!", response);
+    }
+
+    public ApiResponse<LoginRes> registerOrLoginGoogle(LoginWithOauthReq dto, String deviceInfo){
+        Users user = usersRepository.findByEmail(dto.getEmail()).orElseGet(() -> {
+            Users newUser = new Users();
+            newUser.setEmail(dto.getEmail());
+            newUser.setName(dto.getEmail());
+            newUser.setProvider("google");
+            newUser.setProviderId(dto.getProviderId());
+            newUser.setAvatarUrl(dto.getAvatarUrl());
+            newUser.setCreatedAt(Instant.now());
+            return usersRepository.save(newUser);
+        });
+
+        String token = jwtService.generateToken(user.getId(), dto.getEmail());
+
+        RegisterNewSessionReq newSessionReq = new RegisterNewSessionReq();
+        newSessionReq.setUser(user);
+        newSessionReq.setDeviceId(deviceInfo);
+        newSessionReq.setJwtToken(token);
+
+        deviceSessionService.registerNewSession(newSessionReq, jwtService.extractExpired());
+        LoginRes response = new LoginRes(user.getName(), user.getEmail(), token);
+        return ApiResponse.success("Successfully login with Oath2 Google!", response);
     }
 
     @Transactional
