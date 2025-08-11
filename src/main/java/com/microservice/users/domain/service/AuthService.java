@@ -52,7 +52,7 @@ public class AuthService {
     }
 
     @Transactional
-    public ApiResponse<LoginRes> login(LoginReq dto, String deviceInfo) {
+    public ApiResponse<LoginRes> login(LoginReq dto) {
         Users user = usersRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new BadRequestException("Email not found"));
 
@@ -64,7 +64,6 @@ public class AuthService {
 
         RegisterNewSessionReq newSessionReq = new RegisterNewSessionReq();
         newSessionReq.setUser(user);
-        newSessionReq.setDeviceId(deviceInfo);
         newSessionReq.setJwtToken(token);
 
         deviceSessionService.registerNewSession(newSessionReq, jwtService.extractExpired());
@@ -73,7 +72,7 @@ public class AuthService {
         return ApiResponse.success("Successfully login!", response);
     }
 
-    public ApiResponse<LoginRes> registerOrLoginGoogle(LoginWithOauthReq dto, String deviceInfo){
+    public ApiResponse<LoginRes> registerOrLoginGoogle(LoginWithOauthReq dto){
         Users user = usersRepository.findByEmail(dto.getEmail()).orElseGet(() -> {
             Users newUser = new Users();
             newUser.setEmail(dto.getEmail());
@@ -89,7 +88,6 @@ public class AuthService {
 
         RegisterNewSessionReq newSessionReq = new RegisterNewSessionReq();
         newSessionReq.setUser(user);
-        newSessionReq.setDeviceId(deviceInfo);
         newSessionReq.setJwtToken(token);
 
         deviceSessionService.registerNewSession(newSessionReq, jwtService.extractExpired());

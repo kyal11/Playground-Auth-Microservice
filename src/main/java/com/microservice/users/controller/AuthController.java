@@ -28,12 +28,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginRes>> login(@RequestBody LoginReq request) {
-        return ResponseEntity.ok(authService.login(request, request.getDeviceInfo()));
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/login/oauth/google")
     public ResponseEntity<ApiResponse<LoginRes>> loginWithGoogle(@RequestBody LoginWithOauthReq request) {
-        return ResponseEntity.ok(authService.registerOrLoginGoogle(request, request.getDeviceInfo()));
+        return ResponseEntity.ok(authService.registerOrLoginGoogle(request));
     }
 
     @PostMapping("/logout")

@@ -16,5 +16,4 @@ public class LoginWithOauthReq {
     @NotBlank
     private String providerId;
     private String avatarUrl;
-    private String deviceInfo;
 }

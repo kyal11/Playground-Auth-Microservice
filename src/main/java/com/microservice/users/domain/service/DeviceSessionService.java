@@ -36,7 +36,6 @@ public class DeviceSessionService {
 
         DeviceSession newSession = new DeviceSession();
         newSession.setUser(dto.getUser());
-        newSession.setDeviceId(dto.getDeviceId());
         newSession.setJwtToken(dto.getJwtToken());
         newSession.setCreatedAt(Instant.now());
         newSession.setExpiredAt(expiredAt);

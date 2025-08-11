@@ -56,16 +56,15 @@
         const email = $("#email").val();
         const password = $("#password").val();
 
-        // TODO: Ganti endpoint ini sesuai backend-mu
         $.ajax({
-            url: "/api/auth/login",
+            url: "/api/v1/auth/login",
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify({ email, password }),
             success: function (res) {
                 alert("Login berhasil!");
                 localStorage.setItem("accessToken", res.data.token);
-                window.location.href = "/home.html"; // redirect setelah login
+                window.location.href = "/home.html";
             },
             error: function () {
                 alert("Login gagal, cek email/password!");

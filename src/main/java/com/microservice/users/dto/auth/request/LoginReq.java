@@ -15,5 +15,4 @@ public class LoginReq {
     @Min(8)
     private String password;
 
-    private String deviceInfo;
 }

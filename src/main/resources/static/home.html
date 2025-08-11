@@ -28,42 +28,11 @@
             <div class="card shadow">
                 <div class="card-body">
                     <h4 class="card-title text-center mb-4">Login</h4>
-                    <form id="loginForm">
-                     <h1>HOME</h1>
-                    </form>
-                    <hr>
-                    <a href="/oauth2/authorization/google" class="btn btn-light btn-block google-btn">
-                        <img class="google-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
-                        Login with Google
-                    </a>
+                    <h1>Berhasil Login</h1>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    $("#loginForm").submit(function (e) {
-        e.preventDefault();
-        const email = $("#email").val();
-        const password = $("#password").val();
-
-        // TODO: Ganti endpoint ini sesuai backend-mu
-        $.ajax({
-            url: "/api/auth/login",
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ email, password }),
-            success: function (res) {
-                alert("Login berhasil!");
-                localStorage.setItem("accessToken", res.data.token);
-                window.location.href = "/home.html"; // redirect setelah login
-            },
-            error: function () {
-                alert("Login gagal, cek email/password!");
-            }
-        });
-    });
-</script>
 </body>
 </html>

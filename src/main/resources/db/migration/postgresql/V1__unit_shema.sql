@@ -16,7 +16,6 @@ CREATE TABLE users (
 CREATE TABLE device_sessions (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    device_id VARCHAR(255) NOT NULL,
     jwt_token TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     expired_at TIMESTAMP WITH TIME ZONE
